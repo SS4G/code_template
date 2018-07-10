@@ -35,19 +35,27 @@ def initSpark(glbVars, appName="dafault_spark_job_songziheng"):
     glbVars["SparkSession"] = spark
     return spark
 
-def unionAll(dfs):
+def unionDataFrameList(dfs):
+    """
+    将一个list中所有的DataFrame （需要保证schema相同）union起来为一个DataFrame
+    适用于分桶后的操作 
+    """
     return reduce(DataFrame.union, dfs)
 
-def readCsvs(pathTemplate, iterator):
+def readCsvs(pathList):
+    """
+    将一个pathList(一系列hdfs-csv)中所有的csv合并生成一个DataFrame （需要保证schema相同）union起来为一个DataFrame
+    适用于分桶后的操作 
+    """
     dfs = []
-    for part in iterator:
-        path = pathTemplate.format(part)
+    for path in pathList:
         df = spark.read.csv(path, header=True, inferSchema=True)
         dfs.append(df)
-    return unionAll(dfs)
+    return unionDataFrameList(dfs)
 
-def showInfo(info="non", color="greenblue"):
+def showInfo(info="NULL", color="greenblue"):
     """
+    按照设置的颜色打印信息
     -------------------------------------------
     -------------------------------------------
     字体色     |       背景色     |      颜色描述
