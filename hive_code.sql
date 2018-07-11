@@ -1,3 +1,6 @@
+--设置hive运行队列
+SET mapreduce.job.queuename=root.caijing.stats;
+
 -- 创建表
 create table if not exists caijing_dmp_stats.aweme_latest30days_active_dates_daily(
     user_id bigint,
