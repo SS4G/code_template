@@ -4,7 +4,12 @@ import time
 import pickle
 import os 
 import sys
-
+# ----------------------------------------------------
+# python 运行时刷新缓冲区
+sys.stdout.flush()
+# python 运行时文件刷新缓冲区
+fi = open("xxx.txt", "w")
+fi.flush()
 # ----------------------------------------------------
 # python2 python3 的编码问题
 
@@ -39,7 +44,7 @@ unicode_str = bytes.decode("utf-8")
 import json
 json.load(open("xxx.json"))
 json.loads("{\"A\":1 \"B\":2}")
-json.dump(obj ,open("xxx.json","w"),ensure_ascii=False, sort_keys=True, indent=4) # ensure_ascii=False 选项可以保证输出可视的中文 
+json.dump(obj ,open("xxx.json","w"), ensure_ascii=False, sort_keys=True, indent=4) # ensure_ascii=False 选项可以保证输出可视的中文 
 json.dumps(obj, ensure_ascii=False, sort_keys=True, indent=4)
 
 
@@ -52,6 +57,8 @@ time.time()
 # ----------------------------------------------------
 # datetime 相关
 import datetime as dt 
+dt.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
 
 # ----------------------------------------------------
 # 可视化进度条相关
@@ -85,8 +92,8 @@ import logging  # 引入logging模块
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)  # Log等级总开关
 # 第二步，创建一个handler，用于写入日志文件
-fh = logging.FileHandler("test.log" ,mode=w)
-fh2 = logging.FileHandler("test2.log", mode=w)
+fh = logging.FileHandler("test.log" ,mode='w')
+fh2 = logging.FileHandler("test2.log", mode='w')
 fh.setLevel(logging.ERROR)  # 输出到file的log等级的开关
 fh2.setLevel(logging.INFO)  # 输出到file的log等级的开关
 
@@ -150,14 +157,18 @@ logger.critical('this is a logger critical message')
 
 # --------------------------------------------------------
 
-
-
 class ColorLogging:
     """
         分级别答应不同颜色的日志
     """
+
     def __init__(self):
         pass
+
+    @staticmethod
+    def getTimeStr():
+        import datetime as dt
+        return dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     @staticmethod
     def colorStr(str0, color="yellow", highlight=True):
@@ -193,20 +204,31 @@ class ColorLogging:
 
     @staticmethod
     def debug(info):
-        print(ColorLogging.colorStr(info, color="blue"))
+        if not isinstance(info, str):
+            info = str(info)
+        print(ColorLogging.colorStr("{level}: {time} {info}".format(level="DEBUG", time=ColorLogging.getTimeStr(), info=info), color="blue"))
 
     @staticmethod
     def info(info):
-        print(ColorLogging.colorStr(info, color="green"))
+        if not isinstance(info, str):
+            info = str(info)
+        print(ColorLogging.colorStr("{level}: {time} {info}".format(level="INFO", time=ColorLogging.getTimeStr(), info=info), color="green"))
 
     @staticmethod
-    def warning(info):
-        print(ColorLogging.colorStr(info, color="yellow"))
+    def warn(info):
+        if not isinstance(info, str):
+            info = str(info)
+        print(ColorLogging.colorStr("{level}: {time} {info}".format(level="WARNING", time=ColorLogging.getTimeStr(), info=info), color="yellow"))
 
     @staticmethod
     def error(info):
-        print(ColorLogging.colorStr(info, color="red"))
+        if not isinstance(info, str):
+            info = str(info)
+        print(ColorLogging.colorStr("{level}: {time} {info}".format(level="ERROR", time=ColorLogging.getTimeStr(), info=info), color="red"))
 
     @staticmethod
     def critical(info):
-        print(ColorLogging.colorStr(info, color="purple"))
+        if not isinstance(info, str):
+            info = str(info)
+        print(ColorLogging.colorStr("{level}: {time} {info}".format(level="CRITICAL", time=ColorLogging.getTimeStr(), info=info), color="purple"))
+

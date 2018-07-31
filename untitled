@@ -1,0 +1,45 @@
+ select 
+    count(distinct app)
+ from  caijing_dmp_cdw.tmp_douyin_zhongyin_samples LATERAL VIEW explode(app_list) t AS app;
+
+ select 
+      app_list, app_list_type
+ from caijing_dmp_cdw.tmp_douyin_zhongyin_samples limit 1;
+
+(
+select
+    package_name as app, 
+    category_id, 
+    app_name,
+    'android_pkg' as app_type
+from ad_ods.ods_db_webdb_app_android_grab
+union all 
+select 
+    cast(id as string) as app, 
+    category_id,
+    app_name,
+    'ios_id' as app_type
+from ad_ods.ods_db_webdb_app_ios_grab)
+      
+select app_list from caijing_dmp_cdw.tmp_douyin_zhongyin_samples where app_list_type='ios_id' limit 10;
+
+select
+    count(distinct t_sample.uid)
+from (
+    select 
+        t.app as app,
+        uid
+    from  caijing_dmp_cdw.tmp_douyin_zhongyin_samples LATERAL VIEW explode(app_list) t AS app
+) t_sample join (
+    select 
+        cast(id as string) as app, 
+        category_id,
+        app_name
+    from ad_ods.ods_db_webdb_app_ios_grab
+    where date = '20180723'
+) t_ios on (t_sample.app = t_ios.app);
+
+select 
+    count(*)
+from caijing_dmp_cdw.tmp_douyin_zhongyin_samples
+where app_list_type = 'android_pkg'

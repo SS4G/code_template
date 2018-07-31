@@ -2,6 +2,7 @@
 SET mapreduce.job.queuename=root.caijing.stats;
 
 -- 创建表
+--hive 默认的字段分隔符为ascii码的控制符\001,建表的时候用fields terminated by '\001'
 create table if not exists caijing_dmp_stats.aweme_latest30days_active_dates_daily(
     user_id bigint,
     nf_fans_delta array<string>,
@@ -37,7 +38,7 @@ select
     uid,
     ut, 
     origin_id
-from test.labeled_user_profile LATERAL VIEW explode({0}) user_profile_list AS origin_id
+from test.labeled_user_profile LATERAL VIEW explode(explode_col) table_alias AS origin_id
 
 --删除表
 drop table caijing_dmp_stats.aweme_latest30days_active_dates_dailyxxxx;
@@ -76,11 +77,86 @@ split('aaa|bbb|ccc', "\\|")
 --cast(col as type)
 cast('123' as bigint)
 
+--字符串join
+concat_ws('_', cast(uid as string), cast(ut as string))
 -- hive常用函数大全
 -- https://www.cnblogs.com/MOBIN/p/5618747.html
 
+IF(Test Condition, True Value, False Value)
 
+COALESCE(value1,value2,...) --该函数用来获取参数列表中的首个非空值，若均为NULL，则返回NULL，例如：
 
+CASE WHEN 
+
+eg:
+    select pd,
+    case pst
+        when "常年" then 1 
+        when "非常年" then 0
+        else 0
+    end
+    as pt
+    from dgp limit 100;
+
+    select pd,
+    case
+        when pst＝"常年" then 1 
+        when pst＝"非常年" then 0
+        else 0
+    end
+    as pt
+
+--常用统计函数模板
+histogram_numeric
+rank
+row_number
+ntile 
+
+--开窗函数模板 
+select 
+    id, 
+    name,
+    score,
+    row_number() over(partition by name order by score desc) as rk_col,
+    row_number() over(partition by score order by name) as row_col, --以最后的分组方式排序输出
+from test.rank_test;
+
+--创建桶表 关于桶的操作这一句一定要加
+set hive.enforce.bucketing = true;
+--按照 author_id 做哈希
+create table if not exists caijing_dmp_cdw.zhihu_test_authorinfo (
+    author_id            string,
+    is_good_author       bigint,
+    followers_amount    bigint,
+    is_good_answer      string
+)
+CLUSTERED BY (author_id) INTO 4 BUCKETS;
+
+--桶表抽样
+--TABLESAMPLE (BUCKET x OUT OF y [ON colname])
+--抽取1/4
+select
+     author_id,
+     is_good_author,
+     followers_amount
+from caijing_dmp_cdw.zhihu_test_authorinfo TABLESAMPLE(BUCKET 1 OUT OF 4 ON rand()) s
+limit 10;
+--在表按照author_id分桶的情况下 这样直接回取对应分桶的part 效率高
+--from caijing_dmp_cdw.zhihu_test_authorinfo  TABLESAMPLE(BUCKET 1 OUT OF 4 ON author_id) s; 
+
+--分块抽样 保证至少0.1% 至少块大小的数据被返回 所以不会正好是0.1% 
+SELECT count(*)
+FROM caijing_dmp_cdw.zhihu_test_authorinfo TABLESAMPLE(0.1 PERCENT) s;
+
+--按照数据量抽样 至少100M 但是块大小是256M的话会返回256M
+SELECT 
+    count(*)
+FROM caijing_dmp_cdw.zhihu_test_authorinfo TABLESAMPLE(10M) s;
+
+--输出值可能不是10 
+--这种方式可以根据行数来取样，但要特别注意：
+--这里指定的行数，是在每个InputSplit中取样的行数，也就是，每个Map中都取样n ROWS。
+SELECT count(*) FROM caijing_dmp_cdw.zhihu_test_authorinfo TABLESAMPLE(10 ROWS);
 
 
 
