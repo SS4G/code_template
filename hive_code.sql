@@ -158,6 +158,8 @@ FROM caijing_dmp_cdw.zhihu_test_authorinfo TABLESAMPLE(10M) s;
 --这里指定的行数，是在每个InputSplit中取样的行数，也就是，每个Map中都取样n ROWS。
 SELECT count(*) FROM caijing_dmp_cdw.zhihu_test_authorinfo TABLESAMPLE(10 ROWS);
 
+//
+
 
 
 
