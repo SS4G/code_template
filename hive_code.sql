@@ -158,7 +158,27 @@ FROM caijing_dmp_cdw.zhihu_test_authorinfo TABLESAMPLE(10M) s;
 --这里指定的行数，是在每个InputSplit中取样的行数，也就是，每个Map中都取样n ROWS。
 SELECT count(*) FROM caijing_dmp_cdw.zhihu_test_authorinfo TABLESAMPLE(10 ROWS);
 
-//
+--hive 处理json相关函数
+select
+    --event 是一个json 字段 
+    get_json_object(event, "$.key1"), --获取 json 对象中 key1 对应的值
+    get_json_object(event, "$.key1.key2") --获取 深层次中的key的对应的值
+    get_json_object(event, "$.key1.key2[0]") --获取数组的内容
+from xxtable
+
+--hive json 和 map的转换 
+select
+    from_json(json_field) as map_field,
+    to_json(map_filed) as json
+from xxxtable
+
+
+
+
+
+
+
+
 
 
 
