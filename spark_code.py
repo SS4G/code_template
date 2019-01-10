@@ -92,24 +92,24 @@ def showInfo(info="NULL" color="greenblue"):
 #DataFrame
 
 #---------------------------------------------------------------------------------------------------------------------------
-#union(other)
+union(other)
 #explain: Return a new DataFrame containing union of rows in this frame and another frame.
 
 
 #---------------------------------------------------------------------------------------------------------------------------
-#drop(*cols)
+drop(*cols)
 #explain: Returns a new DataFrame that drops the specified column. This is a no-op if schema doesn’t contain the given column name(s).
 #eg: df.drop(age) df.drop(df.age)
 
 
 #---------------------------------------------------------------------------------------------------------------------------
-#dropDuplicates(subset=None)
+dropDuplicates(subset=None)
 #explain: Return a new DataFrame with duplicate rows removed optionally only considering certain columns.
 #eg: df.dropDuplicates() df.dropDuplicates([name height])
 
 
 #---------------------------------------------------------------------------------------------------------------------------
-#join(other on=None how=None)
+join(other on=None how=None)
 #explain:
 #Joins with another DataFrame using the given join expression.
 #
@@ -118,26 +118,26 @@ def showInfo(info="NULL" color="greenblue"):
 #on – a string for the join column name a list of column names a join expression (Column) or a list of Columns. If on is a string or a list of strings indicating the name of the join column(s) the column(s) must exist on both sides and this performs an equi-join.
 #how – str default ‘inner’. One of inner outer left_outer right_outer leftsemi.
 #eg: 
-#df.join(df2 df.name == df2.name outer).select(df.name df2.height)
+df.join(df2 df.name == df2.name outer).select(df.name df2.height)
 #
-#df.join(df2 name outer).select(name height)
+df.join(df2 name outer).select(name height)
 #
-#cond = [df.name == df3.name df.age == df3.age]
-#df.join(df3 cond outer).select(df.name df3.age)
+cond = [df.name == df3.name df.age == df3.age]
+df.join(df3 cond outer).select(df.name df3.age)
 #
-#df.join(df2 name).select(df.name df2.height)
+df.join(df2 name).select(df.name df2.height)
 #
-#df.join(df4 [name age]).select(df.name df.age)
+df.join(df4 [name age]).select(df.name df.age)
 
 #---------------------------------------------------------------------------------------------------------------------------
-#filter(condition)
+filter(condition)
 # where() is an alias for filter()
 #eg:
-#df.filter(df.age > 3)
-#df.where(df.age == 2)
+df.filter(df.age > 3)
+df.where(df.age == 2)
 
 #---------------------------------------------------------------------------------------------------------------------------
-# select(*cols)
+ select(*cols)
 # Projects a set of expressions and returns a new DataFrame.
 # Parameters: cols – list of column names (string) or expressions (Column). If one of the column names is ‘*’ that column is expanded to include all columns in the current DataFrame.
 # eg:
@@ -159,8 +159,20 @@ def showInfo(info="NULL" color="greenblue"):
 # read DataFrame As csv
 # df = spark.read.csv("hdfs://user/songziheng/xxx.csv" sep="\t" header=True inferSchema=True)
 
+#---------------------------------------------------------------------------------------------------------------------------
+# UDF udf example
+from pyspark.sql.functions import udf
+from pyspark.sql.types import StringType
 
+def func(col):
+    if col is None:
+        return "NULL".lower()
+    lis = dict([tuple(i.split("=")) for i in col.split("&")])
+    return lis.get('gender', "NULL").lower()
 
+# 生成udf对象 并写明返回值在spark对应的类型     
+parser_gener = udf(func, StringType())
+gdf = df.withColumn("gender", parser_gener(df['dp_meta']))  
 
 
 
