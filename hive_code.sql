@@ -84,6 +84,7 @@ concat_ws('_', cast(uid as string), cast(ut as string))
 
 IF(Test Condition, True Value, False Value)
 
+--获取第一个非null值 适合多个 outer join的场景
 COALESCE(value1,value2,...) --该函数用来获取参数列表中的首个非空值，若均为NULL，则返回NULL，例如：
 
 CASE WHEN 
@@ -173,6 +174,17 @@ select
 from xxxtable
 
 
+--hive 正则表达式匹配
+select
+     regexp_extract(init_session_info, "gender=(\\w*)", 1) -- 获取init_session_info 中符合pattern的 匹配 
+     --1 表示取出第一个括号里面的值
+from 
+
+--hive 字符串查找 
+select
+    instr(string str, string substr) 
+    --查找字符串str中子字符串substr出现的位置，如果查找失败将返回0，如果任一参数为Null将返回null，注意位置为从1开始的
+from 
 
 
 
