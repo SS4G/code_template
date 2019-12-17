@@ -174,9 +174,10 @@ def func(col):
 parser_gener = udf(func, StringType())
 gdf = df.withColumn("gender", parser_gener(df['dp_meta']))  
 
-# 使用指定的schema创建pyspark
+# 使用指定的schema创建pyspark DataFrame
 schema = StructType([StructField('name', StringType()), StructField('age',IntegerType())])
-row = [Row(name='Severin', age=33)]
-df = spark.createDataFrame(row, schema)
+rows = [Row(name='Severin', age=33)]
+df = spark.createDataFrame(rows, schema) # 创建非空的DataFrame
+df = spark.createDataFrame([], schema) # 创建一个空的DataFrame ch
 
 
