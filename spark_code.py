@@ -181,3 +181,27 @@ df = spark.createDataFrame(rows, schema) # 创建非空的DataFrame
 df = spark.createDataFrame([], schema) # 创建一个空的DataFrame ch
 
 
+# spark 的提交脚本
+# 其中 --file 会将指定的文件全部分发到执行的每一个节点上。
+# 可以直接在spark的分布式程序中读取这个文件 比如一个比较大的字典可以放到json中然后使用
+# --file将这个文件传上去
+SPARK_HOME="/data01/opt/spark-2.2.1-bin-2.7.3"
+SUDO_PREF="sudo -u profile"
+
+$SUDO_PREF ${SPARK_HOME}/bin/spark-submit\
+    --master yarn\
+    --deploy-mode cluster\
+    --files ${SPARK_HOME}/conf/hive-site.xml\
+    --num-executors 60\
+    --executor-cores 4\
+    --executor-memory 4G\
+    --driver-memory 2G\
+    --queue stat\
+    --files ./F_map.json\
+    ./calc_hotscore.py\
+    --nation ng\
+    --language en\
+    --data_date 20191202\
+    --hour 00
+
+

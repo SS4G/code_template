@@ -76,8 +76,8 @@ for i in tqdm(range(1000)):
 import logging  # 引入logging模块
 
 # --------------将信息打印到控制台上---------------------
-logging.basicConfig(level=logging.NOTSET,format="%(asctime)s %(message)s")  # 设置日志级别 不设置默认为WARING以上
-
+logging.basicConfig(level=logging.INFO,format="%(asctime)s %(message)s")  # 设置日志级别 不设置默认为WARING以上
+logging.info(u"麻生希")
 
 logging.debug(u"苍井空")
 logging.info(u"麻生希")
