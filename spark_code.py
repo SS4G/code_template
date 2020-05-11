@@ -204,4 +204,18 @@ $SUDO_PREF ${SPARK_HOME}/bin/spark-submit\
     --data_date 20191202\
     --hour 00
 
+### pyspark 读取没有header的csv文件的模板
+schema = StructType([
+        StructField('field', StringType()),
+        StructField('tag_key', StringType()),
+        StructField('entry_id', StringType()),
+        StructField('timestamp', LongType()),
+        StructField('simple_hot', DoubleType()),
+        StructField('score', DoubleType()),
+        StructField('cross_score', DoubleType()),
+        StructField('vanilla_hot', DoubleType()),
+        StructField('exp_hot', DoubleType()),
+    ])
+df =  spark.read.schema(schema).csv(data_path, sep='\t')
+
 
