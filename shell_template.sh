@@ -1,3 +1,62 @@
+# 基本语法
+## 字符串
+#字符串截取
+# ${string: start :length}    从 string 字符串的左边第 start 个字符开始，向右截取 length 个字符。
+# ${string: start}    从 string 字符串的左边第 start 个字符开始截取，直到最后。
+# ${string: 0-start :length}  从 string 字符串的右边第 start 个字符开始，向右截取 length 个字符。
+# ${string: 0-start}  从 string 字符串的右边第 start 个字符开始截取，直到最后。
+# ${string#*chars}    从 string 字符串第一次出现 *chars 的位置开始，截取 *chars 右边的所有字符。
+# ${string##*chars}   从 string 字符串最后一次出现 *chars 的位置开始，截取 *chars 右边的所有字符。
+# ${string%*chars}    从 string 字符串第一次出现 *chars 的位置开始，截取 *chars 左边的所有字符。
+# ${string%%*chars}   从 string 字符串最后一次出现 *chars 的位置开始，截取 *chars 左边的所有字符。
+
+a="abcdefg"
+# ${string: start :length}
+echo ${a:1:3} # bckd
+
+# 字符串包含判断 
+strA="helloworld"
+strB="low"
+if [[ $strA =~ $strB ]] #
+then
+    echo "包含"
+else
+    echo "不包含"
+fi
+
+if [[ a > 1 ]];
+then
+    echo ${a}
+fi 
+
+## 条件语句
+## 推荐使用 [[  ]] 注意内部的两边都要有空格 
+## < > == 比较的是字符串的字典顺序 -gt -lt -ge -eq 才是比较的 数值的 这个要注意
+if condition1
+then
+    command1
+elif condition2 
+then 
+    command2
+else
+    commandN
+fi
+
+# contition 的形式
+condition1
+
+## 数组
+# 数组迭代
+arr=(a b c)
+for i in ${a[@]};
+do
+    echo ${i}
+done
+
+# 数组中某个元素
+echo ${arr[1]} # return b 第2个元素 索引从0开始 
+
+
 # date 获取指定日期 前后的n天 ! 注意 mac系统 不适用
 date -d "20151001  1 days ago"  "+%Y%m%d" # 获取 一天前的日期 使用 "+%Y%m%d"指定日期格式
 date -d "${src}  ${data_time_out} days ago"  "+%Y%m%d"
